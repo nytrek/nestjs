@@ -1,12 +1,14 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
   Param,
   ParseIntPipe,
   Post,
+  Put,
   Query,
   UsePipes,
   ValidationPipe,
@@ -28,17 +30,6 @@ export class UsersController {
     return this.userService.fetchUsers();
   }
 
-  @Get(':id')
-  getUserById(@Param('id', ParseIntPipe) id: number) {
-    /**
-     * Example of how to handle exception
-     */
-    const user = this.userService.fetchUserById(id);
-    if (!user)
-      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
-    return user;
-  }
-
   /**
    * Traditional way of handeling route params
    * @param request
@@ -52,15 +43,15 @@ export class UsersController {
   /**
    * Nest way of handeling route params
    */
-  @Get(':id/:postId')
-  getUserPostById(
-    @Param('id', ParseIntPipe) id: string, //ParseIntPipe converts the param type into int
-    @Param('postId') postId: string,
-  ) {
-    return {
-      id,
-      postId,
-    };
+  @Get(':id')
+  getUserById(@Param('id', ParseIntPipe) id: number) {
+    /**
+     * Example of how to handle exception
+     */
+    const user = this.userService.fetchUserById(id);
+    if (!user)
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    return user;
   }
 
   /**
@@ -77,14 +68,14 @@ export class UsersController {
   /**
    * Nest way of handeling post requests
    */
-  @Post('Create')
+  @Post('create')
 
   /**
    * applies validator decorators
    * @see CreateUserDto
    */
   @UsePipes(new ValidationPipe())
-  createUserPost(@Body() userData: CreateUserDto) {
+  createUser(@Body() userData: CreateUserDto) {
     console.log(userData);
     /**
      * Since we sanitize the data through our DTO
@@ -97,5 +88,24 @@ export class UsersController {
      */
     this.userService.createUser(userData);
     return userData;
+  }
+
+  @Put('update/:index')
+
+  /**
+   * applies validator decorators
+   * @see CreateUserDto
+   */
+  @UsePipes(new ValidationPipe())
+  updateUserByIndex(
+    @Param('index', ParseIntPipe) index: number,
+    @Body() userData: CreateUserDto,
+  ) {
+    return this.userService.updateUserByIndex(index, userData);
+  }
+
+  @Delete('delete/:index')
+  deleteUserByIndex(@Param('index', ParseIntPipe) index: number) {
+    return this.userService.deleteUserByIndex(index);
   }
 }
