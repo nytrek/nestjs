@@ -1,61 +1,46 @@
-import { Injectable } from '@nestjs/common';
-import { createUserType } from '../../../utils/types';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CreateUserDto } from 'src/users/dtos/CreateUser.dto';
+import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { User } from '../../users.entity';
 
 @Injectable()
 export class UsersService {
-  /**
-   * Business logic
-   */
-  private fakeUsers = [
-    {
-      username: 'Kenny',
-      email: 'kennytran.dev@outlook.com',
-    },
-  ];
+  constructor(
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
+  ) {}
 
-  /**
-   *
-   * @param userDetails
-   * @returns push method
-   */
-  createUser(userDetails: createUserType) {
-    return this.fakeUsers.push(userDetails);
+  getUser(userId: number): Promise<User> {
+    return this.userRepository.findOne({
+      where: {
+        id: userId,
+      },
+    });
   }
 
-  /**
-   *
-   * @returns a list of fake users
-   */
-  fetchUsers() {
-    return this.fakeUsers;
+  getUsers(): Promise<User[]> {
+    return this.userRepository.find();
   }
 
-  /**
-   *
-   * @param id
-   * @returns null to illustrate how to handle exception
-   * @see getUserById
-   */
-  fetchUserById(id: number) {
-    return null;
+  createUser(createUserDto: CreateUserDto): Promise<User> {
+    return this.userRepository.save(createUserDto);
   }
 
-  /**
-   *
-   * @param index
-   * @param userDetails
-   * @returns updated user
-   */
-  updateUserByIndex(index: number, userDetails: createUserType) {
-    return (this.fakeUsers[index] = userDetails);
+  async updateUser(
+    userId: number,
+    createUserDto: CreateUserDto,
+  ): Promise<UpdateResult> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+    });
+
+    if (!user)
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+
+    return await this.userRepository.update({ id: userId }, createUserDto);
   }
 
-  /**
-   *
-   * @param index
-   * @returns deleted user
-   */
-  deleteUserByIndex(index: number) {
-    return this.fakeUsers.splice(index, 1);
+  deleteUser(userId: number): Promise<DeleteResult> {
+    return this.userRepository.delete(userId);
   }
 }

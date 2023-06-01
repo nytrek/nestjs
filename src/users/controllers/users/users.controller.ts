@@ -3,13 +3,9 @@ import {
   Controller,
   Delete,
   Get,
-  HttpException,
-  HttpStatus,
   Param,
-  ParseIntPipe,
   Post,
   Put,
-  Query,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -25,87 +21,29 @@ export class UsersController {
   constructor(private userService: UsersService) {}
 
   @Get()
-  getUsers(@Query('sortBy') sortBy: string) {
-    // console.log(sortBy);
-    return this.userService.fetchUsers();
+  getUsers() {
+    return this.userService.getUsers();
   }
 
-  /**
-   * Traditional way of handeling route params
-   * @param request
-   * @param response
-   */
-  // @Get(':id')
-  // getUsersById(@Req() request: Request, @Res() response: Response) {
-  //   console.log(request.params);
-  // }
-
-  /**
-   * Nest way of handeling route params
-   */
   @Get(':id')
-  getUserById(@Param('id', ParseIntPipe) id: number) {
-    /**
-     * Example of how to handle exception
-     */
-    const user = this.userService.fetchUserById(id);
-    if (!user)
-      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
-    return user;
+  getUserById(@Param() id: number) {
+    return this.userService.getUser(id);
   }
 
-  /**
-   * Traditional way of handeling post requests
-   * @param request
-   * @param response
-   */
-  // @Post()
-  // createUserPost(@Req() request: Request, @Res() response: Response) {
-  //   console.log(request.body);
-  //   response.send('Created');
-  // }
-
-  /**
-   * Nest way of handeling post requests
-   */
   @Post('create')
-
-  /**
-   * applies validator decorators
-   * @see CreateUserDto
-   */
   @UsePipes(new ValidationPipe())
-  createUser(@Body() userData: CreateUserDto) {
-    console.log(userData);
-    /**
-     * Since we sanitize the data through our DTO
-     * We can pass the data directly to our service
-     * however we might consider using a type
-     * instead of deriving types directly through our DTO
-     * because we might not include all the properties
-     * that is in our DTO
-     * @see createUser
-     */
-    this.userService.createUser(userData);
-    return userData;
+  createUser(@Body() createUserDto: CreateUserDto) {
+    return this.userService.createUser(createUserDto);
   }
 
-  @Put('update/:index')
-
-  /**
-   * applies validator decorators
-   * @see CreateUserDto
-   */
+  @Put('update/:id')
   @UsePipes(new ValidationPipe())
-  updateUserByIndex(
-    @Param('index', ParseIntPipe) index: number,
-    @Body() userData: CreateUserDto,
-  ) {
-    return this.userService.updateUserByIndex(index, userData);
+  updateUserById(@Param() id: number, @Body() createUserDto: CreateUserDto) {
+    return this.userService.updateUser(id, createUserDto);
   }
 
-  @Delete('delete/:index')
-  deleteUserByIndex(@Param('index', ParseIntPipe) index: number) {
-    return this.userService.deleteUserByIndex(index);
+  @Delete('delete/:id')
+  deleteUserById(@Param() id: number) {
+    return this.userService.deleteUser(id);
   }
 }
