@@ -24,7 +24,7 @@ export class UsersController {
 
   @Get()
   getUsers(@Query('sortBy') sortBy: string) {
-    console.log(sortBy);
+    // console.log(sortBy);
     return this.userService.fetchUsers();
   }
 
