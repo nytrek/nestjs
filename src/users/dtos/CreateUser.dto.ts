@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsNumber } from 'class-validator';
+
+enum Status {
+  Approved = 'Approved',
+  Pending = 'Pending',
+  Denied = 'Denied',
+}
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -6,6 +12,9 @@ export class CreateUserDto {
 
   @IsNotEmpty()
   lastName: string;
+
+  @IsEnum(Status)
+  status: Status;
 
   @IsNumber()
   @IsNotEmpty()

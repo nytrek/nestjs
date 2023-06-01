@@ -23,7 +23,11 @@ export class UsersService {
   }
 
   createUser(createUserDto: CreateUserDto): Promise<User> {
-    return this.userRepository.save(createUserDto);
+    return this.userRepository.save({
+      ...createUserDto,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
   }
 
   async updateUser(
@@ -37,7 +41,10 @@ export class UsersService {
     if (!user)
       throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
 
-    return await this.userRepository.update({ id: userId }, createUserDto);
+    return await this.userRepository.update(
+      { id: userId },
+      { ...createUserDto, createdAt: new Date(), updatedAt: new Date() },
+    );
   }
 
   deleteUser(userId: number): Promise<DeleteResult> {
