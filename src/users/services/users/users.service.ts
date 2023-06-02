@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from 'src/users/dtos/CreateUser.dto';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { encodePassword } from '../../../utils/bcrypt';
 import { UpdateUserDto } from '../../dtos/UpdateUser.dto';
 import { User } from '../../users.entity';
 
@@ -54,9 +55,12 @@ export class UsersService {
     });
   }
 
-  createUser(createUserDto: CreateUserDto): Promise<User> {
+  async createUser(createUserDto: CreateUserDto): Promise<User> {
+    const { password, ...payload } = createUserDto;
+    const hashedPass = await encodePassword(password);
     return this.userRepository.save({
-      ...createUserDto,
+      ...payload,
+      password: hashedPass,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
@@ -73,9 +77,15 @@ export class UsersService {
     if (!user)
       throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
 
+    const { password, ...payload } = updateUserDto;
+
     return await this.userRepository.update(
       { id: userId },
-      { ...updateUserDto, updatedAt: new Date() },
+      {
+        ...payload,
+        password: password ? await encodePassword(password) : password,
+        updatedAt: new Date(),
+      },
     );
   }
 
