@@ -6,7 +6,7 @@ enum Status {
   Denied = 'Denied',
 }
 
-export class CreateUserDto {
+export class UpdateUserDto {
   @IsNotEmpty()
   firstName: string;
 
@@ -26,6 +26,5 @@ export class CreateUserDto {
   @IsNotEmpty()
   address: string;
 
-  @IsNotEmpty()
-  password: string;
+  password: string | undefined;
 }

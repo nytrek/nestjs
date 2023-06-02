@@ -10,6 +10,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { CreateUserDto } from '../../dtos/CreateUser.dto';
+import { UpdateUserDto } from '../../dtos/UpdateUser.dto';
 import { UsersService } from '../../services/users/users.service';
 
 @Controller('users')
@@ -27,7 +28,7 @@ export class UsersController {
 
   @Get(':id')
   getUserById(@Param() id: number) {
-    return this.userService.getUser(id);
+    return this.userService.getUserById(id);
   }
 
   @Post('create')
@@ -38,8 +39,11 @@ export class UsersController {
 
   @Put('update/:id')
   @UsePipes(new ValidationPipe())
-  updateUserById(@Param() id: number, @Body() createUserDto: CreateUserDto) {
-    return this.userService.updateUser(id, createUserDto);
+  updateUserById(
+    @Param('id') id: number,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return this.userService.updateUser(id, updateUserDto);
   }
 
   @Delete('delete/:id')

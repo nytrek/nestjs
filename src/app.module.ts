@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config'; //loads the env variables which a
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { UsersModule } from './users/users.module';
         rejectUnauthorized: true,
       },
     }),
+    AuthModule,
   ],
   controllers: [],
   providers: [],

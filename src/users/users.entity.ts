@@ -24,6 +24,9 @@ export class User extends BaseEntity {
   lastName: string;
 
   @Column()
+  username: string;
+
+  @Column()
   status: Status;
 
   @Column()
@@ -31,4 +34,7 @@ export class User extends BaseEntity {
 
   @Column()
   address: string;
+
+  @Column()
+  password: string;
 }
