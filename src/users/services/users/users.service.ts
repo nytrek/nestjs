@@ -43,7 +43,7 @@ export class UsersService {
 
     return await this.userRepository.update(
       { id: userId },
-      { ...createUserDto, createdAt: new Date(), updatedAt: new Date() },
+      { ...createUserDto, updatedAt: new Date() },
     );
   }
 
