@@ -83,7 +83,7 @@ export class UsersService {
       { id: userId },
       {
         ...payload,
-        password: password ? await encodePassword(password) : password,
+        password: password ? await encodePassword(password) : undefined,
         updatedAt: new Date(),
       },
     );
