@@ -20,7 +20,10 @@ export class myGateWay implements OnModuleInit {
   }
 
   @SubscribeMessage('newMessage')
-  onNewMessage(@MessageBody() data: string): string {
+  onNewMessage(@MessageBody() data: { name: string; message: string }): {
+    name: string;
+    message: string;
+  } {
     console.log(data);
     this.server.emit('onMessage', data);
     return data;
