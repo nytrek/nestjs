@@ -2,13 +2,15 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config'; //loads the env variables which are used in the TypeOrmModule config
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
-import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { GatewayModule } from './gateway/gateway.module';
+import { SignsModule } from './signs/signs.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    SignsModule,
     UsersModule,
     TypeOrmModule.forRoot({
       type: 'mysql',
@@ -18,7 +20,7 @@ import { GatewayModule } from './gateway/gateway.module';
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_NAME,
       entities: [join(__dirname, '**', '*.entity.{ts,js}')],
-      synchronize: true,
+      synchronize: false,
       ssl: {
         rejectUnauthorized: true,
       },
